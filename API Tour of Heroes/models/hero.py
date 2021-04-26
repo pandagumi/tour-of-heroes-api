@@ -1,5 +1,6 @@
 """Hero model"""
 import uuid
+
 from modules.main import MainModule
 
 
@@ -41,3 +42,18 @@ class Hero(object):
         if hero.exists:
             return Hero(**hero.to_dict())
         return None
+
+    @classmethod
+    def get_heroes(cls):
+        """Get heroes"""
+        return MainModule.get_firestore_db().collection(
+            cls._collection_name).limit(16).stream()
+
+    @classmethod
+    def delete(cls, hero_id):
+        """Delete a hero by id"""
+        hero = MainModule.get_firestore_db().collection(
+            cls._collection_name).document(hero_id).get()
+        if hero.exists:
+            MainModule.get_firestore_db().collection(
+                cls._collection_name).document(hero_id).delete()
