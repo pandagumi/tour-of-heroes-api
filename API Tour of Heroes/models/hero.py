@@ -57,3 +57,9 @@ class Hero(object):
         if hero.exists:
             MainModule.get_firestore_db().collection(
                 cls._collection_name).document(hero_id).delete()
+
+    @classmethod
+    def get_top_heroes(cls):
+        """Get top heroes"""
+        return MainModule.get_firestore_db().collection(
+            cls._collection_name).limit(20).stream()
