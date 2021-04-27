@@ -5,7 +5,7 @@ from flask import request
 from flask_cors import CORS
 import firebase_admin
 from firebase_admin import firestore
-from views.heroes import HeroesHandler
+from views.heroes import HeroesHandler, HeroHandler
 
 # Aqui iniciamos a API
 
@@ -14,6 +14,7 @@ app = Flask(__name__)
 CORS(app)
 API = Api(app)
 API.add_resource(HeroesHandler, '/heroes', endpoint='heroes')
+API.add_resource(HeroHandler, '/hero/<hero_id>', endpoint='hero')
 
 cred = firebase_admin.credentials.Certificate(
     './tour-of-heroes-sl-firebase-adminsdk-wue81-d084bbb569.json')

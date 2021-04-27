@@ -19,3 +19,12 @@ class HeroModule(object):
         hero.universe = params['universe']
         hero.save()
         return hero
+
+    @staticmethod
+    def update(hero, params):
+        """Update hero"""
+        hero.name = params['name']
+        hero.description = params['description']
+        hero.imageUrl = params['imageUrl']
+        hero.universe = params['universe']
+        hero.save()
