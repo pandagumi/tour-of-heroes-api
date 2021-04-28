@@ -43,6 +43,84 @@ class HeroesHandlerTestCase(unittest.TestCase):
         self.assertIsNotNone(response.get_json())
         self.assertIsNotNone(response.get_json()['id'])
 
+    def test_create_hero_without_name(self):
+        """Test create hero without name"""
+        params = {
+            'hero': {
+                'name': '',
+                'description': '',
+                'universe': 'dc',
+                'imageUrl': 'https://image.com.br/image.jpg'
+            }
+        }
+        response = self.app.post(path='/heroes', json=params)
+        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.get_json()['details'],
+                         'Bad request, name is required')
+
+    def test_create_hero_with_name_formatted(self):
+        """Test create hero with uppercase name and blank spaces"""
+        params = {
+            'hero': {
+                'name': ' SUPERMAN ',
+                'description': 'Hero description',
+                'universe': 'dc',
+                'imageUrl': 'https://image.com.br/image.jpg'
+            }
+        }
+        response = self.app.post(path='/heroes', json=params)
+        self.assertEqual(response.status_code, 200)
+
+        # Obtendo o heroi no banco de dados para conferir o nome
+        hero_updated = Hero.get_hero(response.get_json()['id'])
+        self.assertEqual(hero_updated.name, 'Superman')
+
+    def test_create_hero_with_invalid_universe(self):
+        """Test create hero with invalid universe"""
+        params = {
+            'hero': {
+                'name': ' SUPERMAN ',
+                'description': 'Hero description',
+                'universe': 'x-men',
+                'imageUrl': 'https://image.com.br/image.jpg'
+            }
+        }
+        response = self.app.post(path='/heroes', json=params)
+        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.get_json()['details'],
+                         'Bad request, invalid universe')
+
+    def test_create_hero_with_invalid_url(self):
+        """Test create hero with invalid url"""
+        params = {
+            'hero': {
+                'name': 'Superman',
+                'description': 'Superman description',
+                'universe': 'dc',
+                'imageUrl': ''
+            }
+        }
+        response = self.app.post(path='/heroes', json=params)
+        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.get_json()['details'],
+                         'Bad request, invalid image url')
+
+    def test_create_hero_with_formatted_description(self):
+        params = {
+            'hero': {
+                'name': 'SUPERMAN',
+                'description': '          hero description         ',
+                'universe': 'dc',
+                'imageUrl': 'https://image.com.br/image.jpg'
+            }
+        }
+        response = self.app.post(path='/heroes', json=params)
+        self.assertEqual(response.status_code, 200)
+
+        # Obtendo o heroi no banco de dados para conferir a descrição
+        hero_updated = Hero.get_hero(response.get_json()['id'])
+        self.assertEqual(hero_updated.description, 'Hero description')
+
     def test_get_heroes(self):
         """Test get this """
         # Aqui vamos fazer um loop e criar 20 herois
