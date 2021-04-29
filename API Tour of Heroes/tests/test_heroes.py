@@ -29,7 +29,7 @@ class HeroesHandlerTestCase(unittest.TestCase):
             'hero': {
                 'name': 'Superman',
                 'description': 'Superman description',
-                'universe': 'dc',
+                'universe': 'DC',
                 'imageUrl': 'https://super.abril.com.br/wp-content/uploads/2018/09/superman.png?w=1024'
             }
         }
@@ -49,7 +49,7 @@ class HeroesHandlerTestCase(unittest.TestCase):
             'hero': {
                 'name': '',
                 'description': '',
-                'universe': 'dc',
+                'universe': 'DC',
                 'imageUrl': 'https://image.com.br/image.jpg'
             }
         }
@@ -64,7 +64,7 @@ class HeroesHandlerTestCase(unittest.TestCase):
             'hero': {
                 'name': ' SUPERMAN ',
                 'description': 'Hero description',
-                'universe': 'dc',
+                'universe': 'DC',
                 'imageUrl': 'https://image.com.br/image.jpg'
             }
         }
@@ -96,7 +96,7 @@ class HeroesHandlerTestCase(unittest.TestCase):
             'hero': {
                 'name': 'Superman',
                 'description': 'Superman description',
-                'universe': 'dc',
+                'universe': 'DC',
                 'imageUrl': ''
             }
         }
@@ -110,7 +110,7 @@ class HeroesHandlerTestCase(unittest.TestCase):
             'hero': {
                 'name': 'SUPERMAN',
                 'description': '          hero description         ',
-                'universe': 'dc',
+                'universe': 'DC',
                 'imageUrl': 'https://image.com.br/image.jpg'
             }
         }
@@ -135,6 +135,17 @@ class HeroesHandlerTestCase(unittest.TestCase):
         self.assertIn('cursor', response.get_json())
         # Conferindo a quantidade de herois que voltou no json
         self.assertEqual(len(response.get_json()['heroes']), 16)
+        # Fazendo a segunda consulta enviando o cursor retornado
+        cursor = response.get_json()['cursor']
+
+        response = self.app.get(path='/heroes?cursor=' + cursor)
+
+        # Conferindo se voltou 200
+        self.assertEqual(response.status_code, 200)
+
+        # Conferindo a quantidade de herois que voltou no json
+        # Na primeira requisiçao voltou 16 herois entao precisa retornar mais 4
+        self.assertEqual(len(response.get_json()['heroes']), 4)
 
     @staticmethod
     def create_hero(hero_name, universe):
@@ -176,7 +187,7 @@ class HeroesHandlerTestCase(unittest.TestCase):
     def test_update_hero(self):
         """Test update hero"""
         # Criando o heroi
-        hero = self.create_hero('Hero', 'dc')
+        hero = self.create_hero('Hero', 'DC')
         # Enviando a requisição para obter o heroi
         params = {
             'hero': {
@@ -198,7 +209,7 @@ class HeroesHandlerTestCase(unittest.TestCase):
     def test_delete_hero(self):
         """Test delete hero"""
         # Criando o heroi
-        hero = self.create_hero('Hero', 'dc')
+        hero = self.create_hero('Hero', 'DC')
 
         # Enviando a requisição para excluir o heroi
         response = self.app.delete(path='/hero/{0}'.format(hero.id))

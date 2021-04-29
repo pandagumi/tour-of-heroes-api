@@ -30,7 +30,7 @@ class HeroModule(object):
             """^[a-zA-Z0-9-_]+[:./\\]+([a-zA-Z0-9 -_./:=&"'?%+@#$!]+$""", hero.imageUrl)
         if not hero.name:
             raise Exception('Bad request, name is required')
-        if not hero.universe == ("dc" or "marvel"):
+        if not hero.universe == ("DC" or "MARVEL"):
             raise Exception("Bad request, invalid universe")
         if not regex:
             raise Exception("Bad request, invalid image url")
@@ -39,7 +39,8 @@ class HeroModule(object):
     def format_hero_params(hero):
         """Format hero params"""
         hero.name = hero.name.title().strip()
-        hero.description = hero.description.strip().capitalize()
+        if hero.description:
+            hero.description = hero.description.strip().capitalize()
 
     @staticmethod
     def update(hero, params):
