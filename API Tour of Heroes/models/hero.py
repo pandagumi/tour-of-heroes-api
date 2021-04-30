@@ -70,3 +70,12 @@ class Hero(object):
         """Get top heroes"""
         return MainModule.get_firestore_db().collection(
             cls._collection_name).limit(20).stream()
+
+    @classmethod
+    def search(cls, name):
+        """Search heroes"""
+        heroes = MainModule.get_firestore_db().collection(
+            cls._collection_name).where('name', '==', f'{name.title()}').limit(10).stream()
+        if name:
+            return heroes
+        return None
